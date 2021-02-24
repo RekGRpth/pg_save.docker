@@ -5,6 +5,7 @@ RUN exec 2>&1 \
         gcc \
         git \
         libedit-dev \
+        libunwind-dev \
         libxml2-dev \
         make \
         musl-dev \
