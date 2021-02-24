@@ -1,0 +1,28 @@
+#!/bin/sh
+
+exec 2>&1
+realpath "$0"
+set -ex
+NUMBER="$(hostname | grep -oE '\d')"
+cd "$PGDATA"
+case "$NUMBER" in
+    "1")
+        initdb
+        /etc/service/postgres/conf
+        /etc/service/postgres/hba
+    ;;
+    *)
+        PRIMARY="$(hostname | sed -E 's|[[:digit:]]|1|g')"
+        pg_isready --host="$PRIMARY"
+        SLOT="pg_save_standby_$NUMBER"
+        pg_basebackup \
+            --create-slot \
+            --pgdata=. \
+            --host="$PRIMARY" \
+            --progress \
+            --slot="$SLOT" \
+            --verbose \
+            --wal-method=stream \
+            --write-recovery-conf
+    ;;
+esac
