@@ -3,7 +3,7 @@
 exec 2>&1
 install -d -m 0750 -o "$USER" -g "$GROUP" "$PGDATA"
 install -d -m 1775 -o "$USER" -g "$GROUP" /run/postgresql /var/log/postgresql
-install -d -m 0750 -o "$USER" -g "$GROUP" "$HOME/pg_arclog"
+install -d -m 0750 -o "$USER" -g "$GROUP" "$HOME/pg_arclog" "$HOME/pg_log"
 rm -f "$PGDATA/postmaster.pid"
 realpath "$0"
 set -ex
