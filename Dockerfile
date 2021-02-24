@@ -1,6 +1,8 @@
 FROM alpine
 RUN exec 2>&1 \
     && set -ex \
+    && echo https://mirror.yandex.ru/mirrors/alpine/v3.13/main/ > /etc/apk/repositories \
+    && echo https://mirror.yandex.ru/mirrors/alpine/v3.13/community/ >> /etc/apk/repositories \
     && apk add --no-cache --virtual .build-deps \
         gcc \
         git \
