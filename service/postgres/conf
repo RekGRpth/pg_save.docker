@@ -17,7 +17,6 @@ if [ -n "$SERVER_CERT" ]; then echo "ssl_cert_file = '$SERVER_CERT'" >>"$PGDATA/
 if [ -n "$SERVER_KEY" ]; then echo "ssl_key_file = '$SERVER_KEY'" >>"$PGDATA/postgresql.conf"; fi
 if [ -n "$SSL_CA_FILE" ]; then echo "ssl_ca_file = '$SSL_CA_FILE'" >>"$PGDATA/postgresql.conf"; fi
 if [ -n "$SSL_CRL_FILE" ]; then echo "ssl_crl_file = '$SSL_CRL_FILE'" >>"$PGDATA/postgresql.conf"; fi
-echo "shared_preload_libraries = 'pg_backtrace,pg_save'" >>"$PGDATA/postgresql.conf"
 cat >>"$PGDATA/postgresql.conf" <<EOF
 
 archive_cleanup_command = 'pg_archivecleanup -d "$HOME/pg_arclog" "%r" 2>>"$HOME/pg_log/pg_archivecleanup.log"'

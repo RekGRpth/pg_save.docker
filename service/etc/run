@@ -1,0 +1,9 @@
+#!/bin/sh
+
+exec 2>&1
+chmod 755 supervise
+chown "$USER":"$GROUP" supervise/ok supervise/control supervise/status
+realpath "$0"
+set -ex
+HOSTNAME="$(hostname)"
+exec chpst -u "$USER":"$GROUP" etcd

@@ -2,27 +2,25 @@
 
 exec 2>&1
 realpath "$0"
-set -ex
-NUMBER="$(hostname | grep -oE '\d')"
 cd "$PGDATA"
-case "$NUMBER" in
-    "1")
-        initdb
-        /etc/service/postgres/conf
-        /etc/service/postgres/hba
-    ;;
-    *)
-        PRIMARY="$(hostname | sed -E 's|[[:digit:]]|1|g')"
-        pg_isready --host="$PRIMARY"
-        SLOT="pg_save_standby_$NUMBER"
-        pg_basebackup \
-            --create-slot \
-            --pgdata=. \
-            --host="$PRIMARY" \
-            --progress \
-            --slot="$SLOT" \
-            --verbose \
-            --wal-method=stream \
-            --write-recovery-conf
-    ;;
-esac
+set -ex
+HOSTNAME="$(hostname)"
+MAIN="$(etcdctl get main --print-value-only)"
+if [ -z "$MAIN" ]; then
+    RC="$(etcdctl put main "$HOSTNAME")"
+    test "$RC" == "OK"
+    initdb
+    /etc/service/postgres/conf
+    /etc/service/postgres/hba
+else
+    pg_isready --host="$MAIN"
+    pg_basebackup \
+        --create-slot \
+        --pgdata=. \
+        --host="$MAIN" \
+        --progress \
+        --slot="$HOSTNAME" \
+        --verbose \
+        --wal-method=stream \
+        --write-recovery-conf
+fi
