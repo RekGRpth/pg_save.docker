@@ -5,10 +5,16 @@ realpath "$0"
 cd "$PGDATA"
 set -ex
 HOSTNAME="$(hostname)"
-MAIN="$(etcdctl get main --print-value-only)"
+ETCD="http://localhost:2379/v3"
+KEY="$(echo "main" | base64)"
+JSON="{\"key\":\"$KEY\"}"
+MAIN="$(curl -Ls "$ETCD/kv/range" -X POST -d "$JSON" | jq --unbuffered --raw-output ".kvs | .[]?.value" | base64 -d)"
 if [ -z "$MAIN" ]; then
-    RC="$(etcdctl put main "$HOSTNAME")"
-    test "$RC" == "OK"
+    JSON="{\"TTL\":60}"
+    LEASE="$(curl -Ls "$ETCD/lease/grant" -X POST -d "$JSON" | jq --unbuffered --raw-output ".ID")"
+    VALUE="$(echo "$HOSTNAME" | base64)"
+    JSON="{\"key\": \"$KEY\", \"value\": \"$VALUE\", \"lease\": \"$LEASE\"}"
+    RC="$(curl -Ls "$ETCD/kv/put" -X POST -d "$JSON")"
     initdb
     /etc/service/postgres/conf
     /etc/service/postgres/hba
