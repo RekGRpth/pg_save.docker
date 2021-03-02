@@ -17,12 +17,13 @@ if [ -z "$MAIN" ]; then
     /etc/service/postgres/hba
 else
     pg_isready --host="$MAIN"
+    SLOT="$(echo "$HOSTNAME" | tr '.' '_')"
     pg_basebackup \
         --create-slot \
         --pgdata=. \
         --host="$MAIN" \
         --progress \
-        --slot="$HOSTNAME" \
+        --slot="$SLOT" \
         --verbose \
         --wal-method=stream \
         --write-recovery-conf
