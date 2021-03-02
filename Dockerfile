@@ -2,6 +2,7 @@ FROM alpine
 RUN exec 2>&1 \
     && set -ex \
     && apk add --no-cache --virtual .build-deps \
+        curl-dev \
         gcc \
         git \
         libedit-dev \
