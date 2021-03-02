@@ -7,14 +7,12 @@ set -ex
 HOSTNAME="$(hostname)"
 ETCD="http://localhost:2379/v3"
 KEY="$(echo "main" | base64)"
-JSON="{\"key\":\"$KEY\"}"
-MAIN="$(curl -Ls "$ETCD/kv/range" -X POST -d "$JSON" | jq --unbuffered --raw-output ".kvs | .[]?.value" | base64 -d)"
+MAIN="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value" | base64 -d)"
 if [ -z "$MAIN" ]; then
-    JSON="{\"TTL\":60}"
-    LEASE="$(curl -Ls "$ETCD/lease/grant" -X POST -d "$JSON" | jq --unbuffered --raw-output ".ID")"
+    LEASE="$(curl -Ls "$ETCD/lease/grant" -X POST -d "{\"TTL\":60}" | jq --unbuffered --raw-output ".ID")"
     VALUE="$(echo "$HOSTNAME" | base64)"
-    JSON="{\"key\": \"$KEY\", \"value\": \"$VALUE\", \"lease\": \"$LEASE\"}"
-    RC="$(curl -Ls "$ETCD/kv/put" -X POST -d "$JSON")"
+    RC="$(curl -Ls "$ETCD/kv/put" -X POST -d "{\"key\": \"$KEY\", \"value\": \"$VALUE\", \"lease\": \"$LEASE\"}")"
+    test "$VALUE" == "$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value" | base64 -d)"
     initdb
     /etc/service/postgres/conf
     /etc/service/postgres/hba
