@@ -21,7 +21,6 @@ RUN exec 2>&1 \
         busybox-extras \
         busybox-suid \
         ca-certificates \
-        coreutils \
         curl \
         jq \
         musl-locales \

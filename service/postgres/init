@@ -5,13 +5,13 @@ realpath "$0"
 cd "$PGDATA"
 set -ex
 HOSTNAME="$(hostname)"
-KEY="$(echo "main" | base64)"
-MAIN="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value" | base64 -d)"
+KEY="$(echo "main" | jq --unbuffered --raw-output --raw-input "@base64")"
+MAIN="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
 if [ -z "$MAIN" ]; then
     LEASE="$(curl -Ls "$ETCD/lease/grant" -X POST -d "{\"TTL\":60}" | jq --unbuffered --raw-output ".ID")"
-    VALUE="$(echo "$HOSTNAME" | base64)"
+    VALUE="$(echo "$HOSTNAME" | jq --unbuffered --raw-output --raw-input "@base64")"
     RC="$(curl -Ls "$ETCD/kv/put" -X POST -d "{\"key\": \"$KEY\", \"value\": \"$VALUE\", \"lease\": \"$LEASE\"}")"
-    test "$HOSTNAME" == "$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value" | base64 -d)"
+    test "$HOSTNAME" == "$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
     initdb
     /etc/service/postgres/conf
     /etc/service/postgres/hba
