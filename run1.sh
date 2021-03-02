@@ -18,4 +18,4 @@ docker run \
     --name pg_save1 \
     --network name=docker \
     --restart always \
-    rekgrpth/pg_save
+    rekgrpth/pg_save /etc/service/postgres/run
