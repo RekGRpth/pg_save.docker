@@ -11,7 +11,7 @@ if [ -z "$MAIN" ]; then
     LEASE="$(curl -Ls "$ETCD/lease/grant" -X POST -d "{\"TTL\":60}" | jq --unbuffered --raw-output ".ID")"
     VALUE="$(echo "$HOSTNAME" | base64)"
     RC="$(curl -Ls "$ETCD/kv/put" -X POST -d "{\"key\": \"$KEY\", \"value\": \"$VALUE\", \"lease\": \"$LEASE\"}")"
-    test "$VALUE" == "$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value" | base64 -d)"
+    test "$HOSTNAME" == "$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value" | base64 -d)"
     initdb
     /etc/service/postgres/conf
     /etc/service/postgres/hba
