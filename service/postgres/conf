@@ -25,4 +25,10 @@ archive_command = 'test ! -f "$HOME/pg_arclog/%f" && cp "%p" "$HOME/pg_arclog/%f
 archive_mode = on
 max_wal_senders = 10
 wal_level = replica
+
+shared_preload_libraries = 'pg_save'
+log_min_messages = debug1
+log_hostname = on
+synchronous_standby_names = 'FIRST 1 ($CLUSTER_NAME)'
+hot_standby_feedback = on
 EOF
