@@ -5,7 +5,6 @@ realpath "$0"
 cd "$PGDATA"
 set -ex
 HOSTNAME="$(hostname)"
-ETCD="http://localhost:2379/v3"
 KEY="$(echo "main" | base64)"
 MAIN="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value" | base64 -d)"
 if [ -z "$MAIN" ]; then
