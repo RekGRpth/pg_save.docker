@@ -29,6 +29,6 @@ wal_level = replica
 shared_preload_libraries = 'pg_save'
 log_min_messages = debug1
 log_hostname = on
-synchronous_standby_names = 'FIRST 1 ($CLUSTER_NAME)'
+#synchronous_standby_names = 'FIRST 1 ($CLUSTER_NAME)'
 hot_standby_feedback = on
 EOF
