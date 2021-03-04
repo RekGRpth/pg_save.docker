@@ -5,9 +5,9 @@ realpath "$0"
 cd "$PGDATA"
 set -ex
 HOSTNAME="$(hostname)"
-KEY="$(echo "main" | jq --unbuffered --raw-output --raw-input "@base64")"
-MAIN="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
-if [ -z "$MAIN" ]; then
+KEY="$(echo "primary" | jq --unbuffered --raw-output --raw-input "@base64")"
+PRIMARY="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
+if [ -z "$PRIMARY" ]; then
     LEASE="$(curl -Ls "$ETCD/lease/grant" -X POST -d "{\"TTL\":60}" | jq --unbuffered --raw-output ".ID")"
     VALUE="$(echo "$HOSTNAME" | jq --unbuffered --raw-output --raw-input "@base64")"
     RC="$(curl -Ls "$ETCD/kv/put" -X POST -d "{\"key\": \"$KEY\", \"value\": \"$VALUE\", \"lease\": \"$LEASE\"}")"
@@ -16,12 +16,12 @@ if [ -z "$MAIN" ]; then
     /etc/service/postgres/conf
     /etc/service/postgres/hba
 else
-    pg_isready --host="$MAIN"
+    pg_isready --host="$PRIMARY"
     SLOT="$(echo "$HOSTNAME" | tr '.' '_')"
     pg_basebackup \
         --create-slot \
         --pgdata=. \
-        --host="$MAIN" \
+        --host="$PRIMARY" \
         --progress \
         --slot="$SLOT" \
         --verbose \
