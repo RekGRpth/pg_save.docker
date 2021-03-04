@@ -18,4 +18,4 @@ docker run \
     --name pg_save2 \
     --network name=docker \
     --restart always \
-    rekgrpth/pg_save
+    rekgrpth/pg_save runsvdir /etc/service
