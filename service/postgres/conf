@@ -20,8 +20,8 @@ if [ -n "$SSL_CA_FILE" ]; then echo "ssl_ca_file = '$SSL_CA_FILE'" >>"$PGDATA/po
 if [ -n "$SSL_CRL_FILE" ]; then echo "ssl_crl_file = '$SSL_CRL_FILE'" >>"$PGDATA/postgresql.conf"; fi
 cat >>"$PGDATA/postgresql.conf" <<EOF
 
-archive_cleanup_command = 'pg_archivecleanup -d "$HOME/pg_arclog" "%r" 2>>"$HOME/pg_log/pg_archivecleanup.log"'
-archive_command = 'test ! -f "$HOME/pg_arclog/%f" && cp "%p" "$HOME/pg_arclog/%f"'
+archive_cleanup_command = 'pg_archivecleanup -d "pg_arclog" "%r" 2>>"pg_log/pg_archivecleanup.log"'
+archive_command = 'test ! -f "pg_arclog/%f" && cp "%p" "pg_arclog/%f"'
 archive_mode = on
 max_wal_senders = 10
 wal_level = replica

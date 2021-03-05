@@ -2,7 +2,6 @@
 
 exec 2>&1
 realpath "$0"
-cd "$PGDATA"
 set -ex
 HOSTNAME="$(hostname)"
 PRIMARY="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
@@ -17,7 +16,7 @@ if [ -z "$PRIMARY" ]; then
     VALUE="$(echo "$TIMESTAMPTZ" | jq --unbuffered --raw-output --raw-input "@base64")"
     RC="$(curl -Ls "$ETCD/kv/put" -X POST -d "{\"key\": \"$KEY\", \"value\": \"$VALUE\"}")"
     test "$HOSTNAME" == "$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
-    initdb
+    initdb "$PGDATA"
     /etc/service/postgres/conf
     /etc/service/postgres/hba
 else
@@ -25,7 +24,7 @@ else
     SLOT="$(echo "$HOSTNAME" | tr '.' '_')"
     pg_basebackup \
         --create-slot \
-        --pgdata=. \
+        --pgdata="$PGDATA" \
         --host="$PRIMARY" \
         --progress \
         --slot="$SLOT" \

@@ -41,7 +41,7 @@ CMD [ "/etc/service/postgres/run" ]
 ENTRYPOINT [ "docker_entrypoint.sh" ]
 ENV HOME=/var/lib/postgresql
 ENV GROUP=postgres \
-    PGDATA="${HOME}/pg_data" \
+    PGDATA="pg_data" \
     USER=postgres
 VOLUME "${HOME}"
 WORKDIR "${HOME}"
