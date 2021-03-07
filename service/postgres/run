@@ -10,6 +10,21 @@ rm -f "$PGDATA/postmaster.pid"
 realpath "$0"
 set -ex
 test -d "$PGDATA/base" || chpst -u "$USER":"$GROUP" /etc/service/postgres/init
-
+HOSTNAME="$(hostname)"
+KEY="$(echo "primary" | jq --unbuffered --raw-output --raw-input "@base64")"
+PRIMARY="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
+KEY="$(echo "$PRIMARY" | jq --unbuffered --raw-output --raw-input "@base64")"
+PRIMARY_TIMESTAMPTZ="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
+KEY="$(echo "sync" | jq --unbuffered --raw-output --raw-input "@base64")"
+SYNC="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
+KEY="$(echo "$SYNC" | jq --unbuffered --raw-output --raw-input "@base64")"
+SYNC_TIMESTAMPTZ="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
+KEY="$(echo "potential" | jq --unbuffered --raw-output --raw-input "@base64")"
+POTENTIAL="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
+KEY="$(echo "$POTENTIAL" | jq --unbuffered --raw-output --raw-input "@base64")"
+POTENTIAL_TIMESTAMPTZ="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
+if [ -f "$PGDATA/standby.signal" ]; then
+else
+fi
 test -d "$PGDATA/base"
 exec chpst -u "$USER":"$GROUP" postmaster
