@@ -18,7 +18,7 @@ if [ ! -f "$PGDATA/standby.signal" ]; then
         test -n "$SYNC_TIMESTAMPTZ"
         SYNC_SECOND="$(ddiff "$SYNC_TIMESTAMPTZ" "$TIMESTAMPTZ" -f "%S")"
         if [ "$SYNC_SECOND" -gt "30" ]; then
-            exit
+            exit 1
         fi
         POTENTIAL="$(etcdctl get potential --endpoints="$ETCD" --print-value-only)"
         test -n "$POTENTIAL"
@@ -26,7 +26,7 @@ if [ ! -f "$PGDATA/standby.signal" ]; then
         test -n "$POTENTIAL_TIMESTAMPTZ"
         POTENTIAL_SECOND="$(ddiff "$POTENTIAL_TIMESTAMPTZ" "$TIMESTAMPTZ" -f "%S")"
         if [ "$POTENTIAL_SECOND" -gt "30" ]; then
-            exit
+            exit 1
         fi
     fi
 fi
