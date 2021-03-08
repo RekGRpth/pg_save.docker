@@ -9,7 +9,7 @@ if [ -n "$PRIMARY" ]; then
 else
     HOSTNAME="$(hostname)"
     test "OK" == "$(etcdctl put primary "$HOSTNAME" --endpoints="$ETCD")"
-    TIMESTAMPTZ="$(date "+%F %T %Z")"
+    TIMESTAMPTZ="$(date "+%F %T%Z")"
     test "OK" == "$(etcdctl put "$HOSTNAME" "$TIMESTAMPTZ" --endpoints="$ETCD")"
     initdb "$PGDATA"
     /etc/service/postgres/conf

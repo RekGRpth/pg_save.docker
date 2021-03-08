@@ -11,7 +11,7 @@ if [ ! -f "$PGDATA/standby.signal" ]; then
     if [ "$OLD_PRIMARY" != "$PRIMARY" ]; then
         /etc/service/postgres/rewind || /etc/service/postgres/basebackup
     else
-        TIMESTAMPTZ="$(date "+%F %T %Z")"
+        TIMESTAMPTZ="$(date "+%F %T%Z")"
         SYNC="$(etcdctl get sync --endpoints="$ETCD" --print-value-only)"
         test -n "$SYNC"
         SYNC_TIMESTAMPTZ="$(etcdctl get "$SYNC" --endpoints="$ETCD" --print-value-only)"
