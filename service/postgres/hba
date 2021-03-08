@@ -3,6 +3,8 @@
 exec 2>&1
 realpath "$0"
 set -ex
-echo >>"$PGDATA/pg_hba.conf"
-echo "host all all samenet trust" >>"$PGDATA/pg_hba.conf"
-echo "host replication all samenet trust" >>"$PGDATA/pg_hba.conf"
+cat >>"$PGDATA/pg_hba.conf" <<EOF
+
+host all all samenet trust
+host replication all samenet trust
+EOF

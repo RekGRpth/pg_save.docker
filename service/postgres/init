@@ -3,30 +3,15 @@
 exec 2>&1
 realpath "$0"
 set -ex
-HOSTNAME="$(hostname)"
-KEY="$(echo "primary" | jq --unbuffered --raw-output --raw-input "@base64")"
-PRIMARY="$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
-if [ -z "$PRIMARY" ]; then
-    VALUE="$(echo "$HOSTNAME" | jq --unbuffered --raw-output --raw-input "@base64")"
-    RC="$(curl -Ls "$ETCD/kv/put" -X POST -d "{\"key\": \"$KEY\", \"value\": \"$VALUE\"}")"
-    KEY="$(echo "$HOSTNAME" | jq --unbuffered --raw-output --raw-input "@base64")"
+PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
+if [ -n "$PRIMARY" ]; then
+    /etc/service/postgres/basebackup
+else
+    HOSTNAME="$(hostname)"
+    test "OK" == "$(etcdctl put primary "$HOSTNAME" --endpoints="$ETCD")"
     TIMESTAMPTZ="$(date "+%F %T %Z")"
-    VALUE="$(echo "$TIMESTAMPTZ" | jq --unbuffered --raw-output --raw-input "@base64")"
-    RC="$(curl -Ls "$ETCD/kv/put" -X POST -d "{\"key\": \"$KEY\", \"value\": \"$VALUE\"}")"
-    test "$HOSTNAME" == "$(curl -Ls "$ETCD/kv/range" -X POST -d "{\"key\":\"$KEY\"}" | jq --unbuffered --raw-output ".kvs | .[]?.value | @base64d")"
+    test "OK" == "$(etcdctl put "$HOSTNAME" "$TIMESTAMPTZ" --endpoints="$ETCD")"
     initdb "$PGDATA"
     /etc/service/postgres/conf
     /etc/service/postgres/hba
-else
-    pg_isready --host="$PRIMARY"
-    SLOT="$(echo "$HOSTNAME" | tr '.' '_')"
-    pg_basebackup \
-        --create-slot \
-        --pgdata="$PGDATA" \
-        --host="$PRIMARY" \
-        --progress \
-        --slot="$SLOT" \
-        --verbose \
-        --wal-method=stream \
-        --write-recovery-conf
 fi

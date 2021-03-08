@@ -1,0 +1,16 @@
+#!/bin/sh
+
+exec 2>&1
+realpath "$0"
+set -ex
+PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
+test -n "$PRIMARY"
+pg_isready --host="$PRIMARY"
+HOSTNAME="$(hostname)"
+SLOT="$(echo "$HOSTNAME" | tr '.' '_')"
+pg_rewind \
+    --progress \
+    --restore-target-wal \
+    --source-server="host=$PRIMARY application_name=$HOSTNAME" \
+    --target-pgdata="$PGDATA" \
+    --write-recovery-conf
