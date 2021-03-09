@@ -5,7 +5,7 @@ realpath "$0"
 set -ex
 cat >>"$PGDATA/postgresql.auto.conf" <<EOF
 
-archive_cleanup_command = 'pg_archivecleanup -d "pg_arclog" "%r" 2>>"pg_log/pg_archivecleanup.log"'
+archive_cleanup_command = 'pg_archivecleanup -d "pg_arclog" "%r"'
 archive_command = 'test ! -f "pg_arclog/%f" && cp "%p" "pg_arclog/%f"'
 archive_mode = on
 cluster_name = '$CLUSTER_NAME'

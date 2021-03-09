@@ -4,9 +4,8 @@ exec 2>&1
 chmod 755 supervise
 chown "$USER":"$GROUP" supervise/ok supervise/control supervise/status
 cd "$HOME"
-install -d -m 0750 -o "$USER" -g "$GROUP" "$PGDATA"
+install -d -m 0750 -o "$USER" -g "$GROUP" "$PGDATA" pg_arclog
 install -d -m 1775 -o "$USER" -g "$GROUP" /run/postgresql /var/log/postgresql
-install -d -m 0750 -o "$USER" -g "$GROUP" pg_arclog pg_log
 rm -f "$PGDATA/postmaster.pid" /run/postgresql/.s.PGSQL.* /tmp/.s.PGSQL.*
 realpath "$0"
 set -ex
@@ -16,5 +15,4 @@ else
     chpst -u "$USER":"$GROUP" /etc/service/postgres/init
 fi
 chpst -u "$USER":"$GROUP" ln -fs ../pg_arclog "$PGDATA/pg_arclog"
-chpst -u "$USER":"$GROUP" ln -fs ../pg_log "$PGDATA/pg_log"
 exec chpst -u "$USER":"$GROUP" postmaster
