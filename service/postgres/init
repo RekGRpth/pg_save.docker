@@ -1,6 +1,8 @@
 #!/bin/sh
 
 exec 2>&1
+ln -fs ../pg_arclog "$PGDATA/pg_arclog"
+ln -fs ../pg_log "$PGDATA/pg_log"
 realpath "$0"
 set -ex
 PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
