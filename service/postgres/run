@@ -14,5 +14,5 @@ if [ -d "$PGDATA/base" ]; then
 else
     chpst -u "$USER":"$GROUP" /etc/service/postgres/init
 fi
-chpst -u "$USER":"$GROUP" ln -fs ../pg_arclog "$PGDATA/pg_arclog"
+test -s "$PGDATA/pg_arclog" || chpst -u "$USER":"$GROUP" ln -s ../pg_arclog "$PGDATA/pg_arclog"
 exec chpst -u "$USER":"$GROUP" postmaster
