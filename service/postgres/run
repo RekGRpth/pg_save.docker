@@ -7,8 +7,8 @@ cd "$HOME"
 install -d -m 0750 -o "$USER" -g "$GROUP" "$PGDATA"
 install -d -m 1775 -o "$USER" -g "$GROUP" /run/postgresql /var/log/postgresql
 install -d -m 0750 -o "$USER" -g "$GROUP" pg_arclog pg_log
-ln -fs pg_arclog ../pg_arclog
-ln -fs pg_log ../pg_log
+ln -fs ../pg_arclog "$PGDATA/pg_arclog"
+ln -fs ../pg_log "$PGDATA/pg_log"
 rm -f "$PGDATA/postmaster.pid" /run/postgresql/.s.PGSQL.* /tmp/.s.PGSQL.*
 realpath "$0"
 set -ex
