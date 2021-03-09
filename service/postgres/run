@@ -1,13 +1,13 @@
 #!/bin/sh
 
 exec 2>&1
+chmod 755 supervise
+chown "$USER":"$GROUP" supervise/ok supervise/control supervise/status
 cd "$HOME"
 install -d -m 0750 -o "$USER" -g "$GROUP" "$PGDATA"
 install -d -m 1775 -o "$USER" -g "$GROUP" /run/postgresql /var/log/postgresql
-install -d -m 0750 -o "$USER" -g "$GROUP" "$HOME/pg_arclog" "$HOME/pg_log"
-chmod 755 supervise
-chown "$USER":"$GROUP" supervise/ok supervise/control supervise/status
-rm -f "$PGDATA/postmaster.pid"
+install -d -m 0750 -o "$USER" -g "$GROUP" pg_arclog pg_log
+rm -f "$PGDATA/postmaster.pid" /run/postgresql/.s.PGSQL.* /tmp/.s.PGSQL.*
 realpath "$0"
 set -ex
 if [ -d "$PGDATA/base" ]; then
