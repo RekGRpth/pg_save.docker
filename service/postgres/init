@@ -23,6 +23,12 @@ else
         /etc/service/postgres/hba
     else
         /etc/service/postgres/basebackup
+        SLOT="$(echo "$HOSTNAME" | tr '.' '_')"
+        cat >>"$PGDATA/postgresql.auto.conf" <<EOF
+primary_conninfo = 'host=$PRIMARY application_name=$HOSTNAME'
+primary_slot_name = '$SLOT'
+
+EOF
     fi
 fi
-test -s "$PGDATA/pg_arclog" || chpst -u "$USER":"$GROUP" ln -s ../pg_arclog "$PGDATA/pg_arclog"
+test -s "$PGDATA/pg_arclog" || ln -s ../pg_arclog "$PGDATA/pg_arclog"
