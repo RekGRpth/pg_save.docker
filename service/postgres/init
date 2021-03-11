@@ -25,3 +25,4 @@ else
         /etc/service/postgres/basebackup
     fi
 fi
+test -s "$PGDATA/pg_arclog" || chpst -u "$USER":"$GROUP" ln -s ../pg_arclog "$PGDATA/pg_arclog"
