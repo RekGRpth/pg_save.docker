@@ -22,6 +22,7 @@ if [ ! -f "$PGDATA/standby.signal" ]; then
         if [ "$SYNC_SECOND" -gt "30" ]; then
             exit 1
         fi
+        pg_isready --host="$SYNC"
         POTENTIAL="$(etcdctl get potential --endpoints="$ETCD" --print-value-only)"
         test -n "$POTENTIAL"
         POTENTIAL_TIMESTAMPTZ="$(etcdctl get "$POTENTIAL" --endpoints="$ETCD" --print-value-only)"
@@ -30,5 +31,6 @@ if [ ! -f "$PGDATA/standby.signal" ]; then
         if [ "$POTENTIAL_SECOND" -gt "30" ]; then
             exit 1
         fi
+        pg_isready --host="$POTENTIAL"
     fi
 fi
