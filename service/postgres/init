@@ -5,15 +5,23 @@ realpath "$0"
 set -ex
 HOSTNAME="$(hostname)"
 PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
-PRIMARY_TIMESTAMPTZ="$(etcdctl get "$PRIMARY" --endpoints="$ETCD" --print-value-only)"
 TIMESTAMPTZ="$(date "+%F %T%Z")"
-PRIMARY_SECOND="$(ddiff "$PRIMARY_TIMESTAMPTZ" "$TIMESTAMPTZ" -f "%S")"
-if [ -z "$PRIMARY" ] || [ "$PRIMARY_SECOND" -gt "30" ]; then
+if [ -z "$PRIMARY" ]; then
     test "OK" == "$(etcdctl put primary "$HOSTNAME" --endpoints="$ETCD")"
     test "OK" == "$(etcdctl put "$HOSTNAME" "$TIMESTAMPTZ" --endpoints="$ETCD")"
     initdb "$PGDATA"
     /etc/service/postgres/conf
     /etc/service/postgres/hba
 else
-    /etc/service/postgres/basebackup
+    PRIMARY_TIMESTAMPTZ="$(etcdctl get "$PRIMARY" --endpoints="$ETCD" --print-value-only)"
+    PRIMARY_SECOND="$(ddiff "$PRIMARY_TIMESTAMPTZ" "$TIMESTAMPTZ" -f "%S")"
+    if [ "$PRIMARY_SECOND" -gt "30" ]; then
+        test "OK" == "$(etcdctl put primary "$HOSTNAME" --endpoints="$ETCD")"
+        test "OK" == "$(etcdctl put "$HOSTNAME" "$TIMESTAMPTZ" --endpoints="$ETCD")"
+        initdb "$PGDATA"
+        /etc/service/postgres/conf
+        /etc/service/postgres/hba
+    else
+        /etc/service/postgres/basebackup
+    fi
 fi
