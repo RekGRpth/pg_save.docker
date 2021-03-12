@@ -7,18 +7,18 @@ cat >>"$PGDATA/postgresql.auto.conf" <<EOF
 
 archive_cleanup_command = 'pg_archivecleanup -d "pg_arclog" "%r"'
 archive_command = 'test ! -f "pg_arclog/%f" && cp "%p" "pg_arclog/%f"'
-archive_mode = on
+archive_mode = 'on'
 cluster_name = '$CLUSTER_NAME'
 custom.etcd = '$ETCD'
-hot_standby_feedback = on
+hot_standby_feedback = 'on'
 listen_addresses = '*'
-log_hostname = on
-log_min_messages = debug1
-max_logical_replication_workers = 0
-max_sync_workers_per_subscription = 0
-max_wal_senders = 3
+log_hostname = 'on'
+log_min_messages = 'debug1'
+max_logical_replication_workers = '0'
+max_sync_workers_per_subscription = '0'
+max_wal_senders = '3'
 restore_command = 'test -f "pg_arclog/%f" && cp "pg_arclog/%f" "%p"'
 shared_preload_libraries = 'pg_save'
-wal_level = replica
-wal_log_hints = on
+wal_level = 'replica'
+wal_log_hints = 'on'
 EOF
