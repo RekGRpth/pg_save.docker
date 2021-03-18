@@ -12,5 +12,10 @@ pg_rewind \
     --progress \
     --restore-target-wal \
     --source-server="host=$PRIMARY application_name=$HOSTNAME" \
-    --target-pgdata="$PGDATA" \
-    --write-recovery-conf
+    --target-pgdata="$PGDATA"
+touch "$PGDATA/standby.signal"
+cat >>"$PGDATA/postgresql.auto.conf" <<EOF
+primary_conninfo = 'host=$PRIMARY application_name=$HOSTNAME'
+primary_slot_name = '$SLOT'
+
+EOF
