@@ -6,7 +6,7 @@ set -ex
 cat >>"$PGDATA/postgresql.auto.conf" <<EOF
 
 archive_cleanup_command = 'pg_archivecleanup -d "pg_arclog" "%r"'
-archive_command = 'test ! -f "pg_arclog/%f" && cp "%p" "pg_arclog/%f"'
+archive_command = 'test ! -f "pg_arclog/%f" && gzip -9 <"%p" >"pg_arclog/%f"'
 archive_mode = 'on'
 auto_explain.log_analyze = 'on'
 auto_explain.log_buffers = 'on'
@@ -23,7 +23,7 @@ log_min_messages = 'debug1'
 max_logical_replication_workers = '0'
 max_sync_workers_per_subscription = '0'
 max_wal_senders = '3'
-restore_command = 'test -f "pg_arclog/%f" && cp "pg_arclog/%f" "%p"'
+restore_command = 'test -f "pg_arclog/%f" && gunzip <"pg_arclog/%f" >"%p"'
 session_preload_libraries = 'auto_explain'
 shared_preload_libraries = 'pg_save'
 wal_level = 'replica'
