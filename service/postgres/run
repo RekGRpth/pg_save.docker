@@ -16,4 +16,5 @@ else
     chpst -u "$USER":"$GROUP" /etc/service/postgres/init
 fi
 rm -f postmaster.pid /run/postgresql/.s.PGSQL.* /tmp/.s.PGSQL.*
+cd ..
 exec chpst -u "$USER":"$GROUP" postmaster
