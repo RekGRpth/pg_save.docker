@@ -3,7 +3,7 @@
 exec 2>&1
 realpath "$0"
 set -ex
-cat >>"$PGDATA/pg_hba.conf" <<EOF
+cat >>pg_hba.conf <<EOF
 
 host all all samenet trust
 host replication all samenet trust

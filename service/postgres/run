@@ -9,10 +9,11 @@ chown "$USER":"$GROUP" supervise/ok supervise/control supervise/status
 cd "$HOME"
 install -d -m 0750 -o "$USER" -g "$GROUP" "$PGDATA" pg_arclog
 install -d -m 1775 -o "$USER" -g "$GROUP" /run/postgresql /var/log/postgresql
-if [ -d "$PGDATA/base" ]; then
+cd "$PGDATA"
+if [ -d base ]; then
     chpst -u "$USER":"$GROUP" /etc/service/postgres/check
 else
     chpst -u "$USER":"$GROUP" /etc/service/postgres/init
 fi
-rm -f "$PGDATA/postmaster.pid" /run/postgresql/.s.PGSQL.* /tmp/.s.PGSQL.*
+rm -f postmaster.pid /run/postgresql/.s.PGSQL.* /tmp/.s.PGSQL.*
 exec chpst -u "$USER":"$GROUP" postmaster

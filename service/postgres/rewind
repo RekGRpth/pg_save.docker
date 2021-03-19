@@ -8,12 +8,13 @@ test -n "$PRIMARY"
 pg_isready --host="$PRIMARY"
 HOSTNAME="$(hostname)"
 pg_rewind \
+    --debug \
     --progress \
     --restore-target-wal \
     --source-server="host=$PRIMARY application_name=$HOSTNAME" \
-    --target-pgdata="$PGDATA"
-touch "$PGDATA/standby.signal"
-cat >>"$PGDATA/postgresql.auto.conf" <<EOF
+    --target-pgdata=.
+touch standby.signal
+cat >>postgresql.auto.conf <<EOF
 primary_conninfo = 'host=$PRIMARY application_name=$HOSTNAME'
 
 EOF

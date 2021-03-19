@@ -3,7 +3,7 @@
 exec 2>&1
 realpath "$0"
 set -ex
-cat >>"$PGDATA/postgresql.auto.conf" <<EOF
+cat >>postgresql.auto.conf <<EOF
 
 archive_command = 'test ! -f "../pg_arclog/%f" && gzip -9 <"%p" >"../pg_arclog/%f"'
 archive_mode = 'on'
