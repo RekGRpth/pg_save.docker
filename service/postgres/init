@@ -25,4 +25,3 @@ else
         /etc/service/postgres/basebackup
     fi
 fi
-test -s "$PGDATA/pg_arclog" || ln -s ../pg_arclog "$PGDATA/pg_arclog"
