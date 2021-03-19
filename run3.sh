@@ -15,7 +15,7 @@ docker run \
     --env USER_ID="$(id -u)" \
     --hostname pg_save3.docker \
     --mount type=bind,source=/etc/certs,destination=/etc/certs,readonly \
-    --mount type=volume,source=pg_arclog,destination=/var/lib/postgresql/pg_arclog \
+    --mount type=volume,source=pg_arclog,destination=/var/lib/postgresql/arclog \
     --mount type=volume,source=pg_save3,destination=/var/lib/postgresql \
     --name pg_save3 \
     --network name=docker \
