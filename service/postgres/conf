@@ -7,7 +7,7 @@ cat >>"$PGDATA/postgresql.auto.conf" <<EOF
 
 archive_cleanup_command = 'pg_archivecleanup -d "pg_arclog" "%r"'
 archive_command = 'test ! -f "pg_arclog/%f" && gzip -9 <"%p" >"pg_arclog/%f"'
-archive_mode = 'always'
+archive_mode = 'on'
 auto_explain.log_analyze = 'on'
 auto_explain.log_buffers = 'on'
 auto_explain.log_min_duration = '100'
