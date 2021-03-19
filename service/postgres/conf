@@ -28,4 +28,5 @@ session_preload_libraries = 'auto_explain'
 shared_preload_libraries = 'pg_save'
 wal_level = 'replica'
 wal_log_hints = 'on'
+wal_receiver_create_temp_slot = 'on'
 EOF

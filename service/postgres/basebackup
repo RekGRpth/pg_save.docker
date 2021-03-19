@@ -7,18 +7,14 @@ PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
 test -n "$PRIMARY"
 pg_isready --host="$PRIMARY"
 HOSTNAME="$(hostname)"
-SLOT="$(echo "$HOSTNAME" | tr '.' '_')"
 pg_basebackup \
-    --create-slot \
     --dbname="host=$PRIMARY application_name=$HOSTNAME" \
     --pgdata="$PGDATA" \
     --progress \
-    --slot="$SLOT" \
     --verbose \
     --wal-method=stream
 touch "$PGDATA/standby.signal"
 cat >>"$PGDATA/postgresql.auto.conf" <<EOF
 primary_conninfo = 'host=$PRIMARY application_name=$HOSTNAME'
-primary_slot_name = '$SLOT'
 
 EOF
