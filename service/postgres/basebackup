@@ -6,14 +6,20 @@ set -ex
 PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
 test -n "$PRIMARY"
 pg_isready --host="$PRIMARY"
-HOSTNAME="$(hostname)"
+cd ..
+BACKUP="$(mktemp -dup .)"
+install -d -m 0750 -o "$USER" -g "$GROUP" "$BACKUP"
 pg_basebackup \
-    --dbname="host=$PRIMARY application_name=$HOSTNAME" \
-    --pgdata=. \
+    --host="$PRIMARY" \
+    --pgdata="$BACKUP" \
     --progress \
     --verbose \
     --wal-method=stream
+rm -rf "$PGDATA"
+mv "$BACKUP" "$PGDATA"
+cd "$PGDATA"
 touch standby.signal
+HOSTNAME="$(hostname)"
 cat >>postgresql.auto.conf <<EOF
 primary_conninfo = 'host=$PRIMARY application_name=$HOSTNAME'
 

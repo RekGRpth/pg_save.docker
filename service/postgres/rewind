@@ -6,13 +6,13 @@ set -ex
 PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
 test -n "$PRIMARY"
 pg_isready --host="$PRIMARY"
-HOSTNAME="$(hostname)"
 pg_rewind \
     --progress \
     --restore-target-wal \
-    --source-server="host=$PRIMARY application_name=$HOSTNAME" \
+    --source-server="host=$PRIMARY" \
     --target-pgdata=.
 touch standby.signal
+HOSTNAME="$(hostname)"
 cat >>postgresql.auto.conf <<EOF
 primary_conninfo = 'host=$PRIMARY application_name=$HOSTNAME'
 
