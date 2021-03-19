@@ -8,7 +8,6 @@ test -n "$PRIMARY"
 pg_isready --host="$PRIMARY"
 HOSTNAME="$(hostname)"
 pg_rewind \
-    --debug \
     --progress \
     --restore-target-wal \
     --source-server="host=$PRIMARY application_name=$HOSTNAME" \
