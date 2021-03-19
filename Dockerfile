@@ -42,8 +42,9 @@ CMD [ "/etc/service/postgres/run" ]
 ENTRYPOINT [ "docker_entrypoint.sh" ]
 ENV HOME=/var/lib/postgresql
 ENV GROUP=postgres \
-    PGDATA="pg_data" \
+    PGDATA="data" \
     USER=postgres
+ENV ARCLOG="${PGDATA}/../arclog"
 VOLUME "${HOME}"
 WORKDIR "${HOME}"
 RUN exec 2>&1 \
