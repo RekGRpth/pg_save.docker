@@ -41,10 +41,10 @@ ADD service /etc/service
 CMD [ "/etc/service/postgres/run" ]
 ENTRYPOINT [ "docker_entrypoint.sh" ]
 ENV HOME=/var/lib/postgresql
-ENV GROUP=postgres \
+ENV ARCLOG=../arclog \
+    GROUP=postgres \
     PGDATA="data" \
     USER=postgres
-ENV ARCLOG="${PGDATA}/../arclog"
 VOLUME "${HOME}"
 WORKDIR "${HOME}"
 RUN exec 2>&1 \

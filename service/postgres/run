@@ -7,9 +7,10 @@ cd "$(dirname "$0")"
 chmod 755 supervise
 chown "$USER":"$GROUP" supervise/ok supervise/control supervise/status
 cd "$HOME"
-install -d -m 0750 -o "$USER" -g "$GROUP" "$PGDATA" "$ARCLOG"
+install -d -m 0750 -o "$USER" -g "$GROUP" "$PGDATA"
 install -d -m 1775 -o "$USER" -g "$GROUP" /run/postgresql /var/log/postgresql
 cd "$PGDATA"
+install -d -m 0750 -o "$USER" -g "$GROUP" "$ARCLOG"
 if [ -d base ]; then
     chpst -u "$USER":"$GROUP" /etc/service/postgres/check
 else
