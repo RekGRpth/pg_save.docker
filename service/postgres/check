@@ -3,12 +3,17 @@
 exec 2>&1
 realpath "$0"
 set -ex
-if [ ! -f "$PGDATA/standby.signal" ]; then
+PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
+if [ -f "$PGDATA/standby.signal" ]; then
+    test -n "$PRIMARY"
+    HOSTNAME="$(hostname)"
+    SLOT="$(echo "$HOSTNAME" | tr '.' '_')"
+    psql --host="$PRIMARY" --command="SELECT CASE WHEN s IS NULL THEN pg_create_physical_replication_slot(slot_name) END FROM (VALUES ('$SLOT')) AS v (slot_name) LEFT JOIN pg_replication_slots AS s USING (slot_name)"
+else
     OLD_PRIMARY="$(sed -n "s|^pg_save\.primary = ||p" "$PGDATA/postgresql.auto.conf" | tr -d "'")"
     test -n "$OLD_PRIMARY" || exit 0
     SYNCHRONOUS_STANDBY_NAMES="$(sed -n "s|^synchronous_standby_names = ||p" "$PGDATA/postgresql.auto.conf" | tr -d "'")"
     test -n "$SYNCHRONOUS_STANDBY_NAMES" || exit 0
-    PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
     test -n "$PRIMARY"
     if [ "$OLD_PRIMARY" != "$PRIMARY" ]; then
         /etc/service/postgres/rewind || /etc/service/postgres/basebackup
