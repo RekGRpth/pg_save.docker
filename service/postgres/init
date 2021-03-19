@@ -9,7 +9,7 @@ TIMESTAMPTZ="$(date "+%F %T%Z")"
 if [ -z "$PRIMARY" ]; then
     test "OK" == "$(etcdctl put primary "$HOSTNAME" --endpoints="$ETCD")"
     test "OK" == "$(etcdctl put "$HOSTNAME" "$TIMESTAMPTZ" --endpoints="$ETCD")"
-    initdb
+    initdb .
     /etc/service/postgres/conf
     /etc/service/postgres/hba
 else
@@ -18,7 +18,7 @@ else
     if [ "$PRIMARY_SECOND" -gt "30" ]; then
         test "OK" == "$(etcdctl put primary "$HOSTNAME" --endpoints="$ETCD")"
         test "OK" == "$(etcdctl put "$HOSTNAME" "$TIMESTAMPTZ" --endpoints="$ETCD")"
-        initdb
+        initdb .
         /etc/service/postgres/conf
         /etc/service/postgres/hba
     else
