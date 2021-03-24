@@ -5,12 +5,14 @@ realpath "$0"
 set -ex
 PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
 test -n "$PRIMARY"
-pg_isready --host="$PRIMARY"
+HOSTNAME="$(hostname)"
+CONNSTR="host=$PRIMARY application_name=$HOSTNAME target_session_attrs=read-write"
+pg_isready --dbname="$CONNSTR"
 cd ..
 BACKUP="$(mktemp -dup .)"
 install -d -m 0750 -o "$USER" -g "$GROUP" "$BACKUP"
 pg_basebackup \
-    --host="$PRIMARY" \
+    --dbname="$CONNSTR" \
     --pgdata="$BACKUP" \
     --progress \
     --verbose \
@@ -19,8 +21,7 @@ rm -rf "$PGDATA"
 mv "$BACKUP" "$PGDATA"
 cd "$PGDATA"
 touch standby.signal
-HOSTNAME="$(hostname)"
 cat >>postgresql.auto.conf <<EOF
-primary_conninfo = 'host=$PRIMARY application_name=$HOSTNAME'
+primary_conninfo = '$CONNSTR'
 
 EOF
