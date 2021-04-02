@@ -4,7 +4,6 @@ exec 2>&1
 realpath "$0"
 set -ex
 cat >>postgresql.auto.conf <<EOF
-
 archive_command = 'test ! -f "$ARCLOG/%f" && gzip -9 <"%p" >"$ARCLOG/%f"'
 archive_mode = 'on'
 auto_explain.log_analyze = 'on'
@@ -14,7 +13,6 @@ auto_explain.log_nested_statements = 'on'
 auto_explain.log_triggers = 'on'
 auto_explain.log_verbose = 'on'
 cluster_name = '$CLUSTER_NAME'
-custom.etcd = '$ETCD'
 datestyle = 'iso, dmy'
 hot_standby_feedback = 'on'
 listen_addresses = '*'

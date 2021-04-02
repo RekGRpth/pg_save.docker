@@ -2,7 +2,6 @@ FROM alpine
 RUN exec 2>&1 \
     && set -ex \
     && apk add --no-cache --virtual .build-deps \
-        curl-dev \
         gcc \
         git \
         libedit-dev \
@@ -14,12 +13,9 @@ RUN exec 2>&1 \
     && mkdir -p /usr/src \
     && cd /usr/src \
     && git clone --recursive https://github.com/RekGRpth/pg_async.git \
-    && git clone --recursive https://github.com/RekGRpth/pg_curl.git \
     && git clone --recursive https://github.com/RekGRpth/pg_save.git \
     && cd / \
     && find /usr/src -maxdepth 1 -mindepth 1 -type d | sort -u | while read -r NAME; do echo "$NAME" && cd "$NAME" && make -j"$(nproc)" USE_PGXS=1 install || exit 1; done \
-    && apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing --virtual .edge-rundeps \
-        etcd-ctl \
     && apk add --no-cache --virtual .postgresql-rundeps \
         busybox-extras \
         busybox-suid \
@@ -33,7 +29,7 @@ RUN exec 2>&1 \
         sed \
         shadow \
         tzdata \
-        $(scanelf --needed --nobanner --format '%n#p' --recursive /usr/lib/postgresql/pg_async.so /usr/lib/postgresql/pg_curl.so /usr/lib/postgresql/pg_save.so | tr ',' '\n' | sort -u | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }') \
+        $(scanelf --needed --nobanner --format '%n#p' --recursive /usr/lib/postgresql/* | tr ',' '\n' | sort -u | while read -r lib; do test ! -e "/usr/local/lib/$lib" && echo "so:$lib"; done) \
     && apk del --no-cache .build-deps \
     && rm -rf /usr/src /usr/share/doc /usr/share/man /usr/local/share/doc /usr/local/share/man \
     && echo done

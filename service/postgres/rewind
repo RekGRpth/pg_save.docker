@@ -3,18 +3,12 @@
 exec 2>&1
 realpath "$0"
 set -ex
-PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
-test -n "$PRIMARY"
-HOSTNAME="$(hostname)"
-CONNSTR="host=$PRIMARY application_name=$HOSTNAME target_session_attrs=read-write"
-pg_isready --dbname="$CONNSTR"
 pg_rewind \
     --progress \
     --restore-target-wal \
-    --source-server="$CONNSTR" \
+    --source-server="$PRIMARY_CONNINFO" \
     --target-pgdata=.
 touch standby.signal
 cat >>postgresql.auto.conf <<EOF
-primary_conninfo = '$CONNSTR'
-
+primary_conninfo = '$PRIMARY_CONNINFO'
 EOF

@@ -4,33 +4,7 @@ exec 2>&1
 realpath "$0"
 set -ex
 if [ ! -f standby.signal ]; then
-    OLD_PRIMARY="$(sed -n "s|^pg_save\.primary = ||p" postgresql.auto.conf | tr -d "'")"
-    test -n "$OLD_PRIMARY" || exit 0
-    SYNCHRONOUS_STANDBY_NAMES="$(sed -n "s|^synchronous_standby_names = ||p" postgresql.auto.conf | tr -d "'")"
-    test -n "$SYNCHRONOUS_STANDBY_NAMES" || exit 0
-    PRIMARY="$(etcdctl get primary --endpoints="$ETCD" --print-value-only)"
-    test -n "$PRIMARY"
-    if [ "$OLD_PRIMARY" != "$PRIMARY" ]; then
+    if pg_isready --dbname="$PRIMARY_CONNINFO" && psql --quiet --tuples-only --no-align --dbname="$PRIMARY_CONNINFO" --command="SELECT now()"; then
         /etc/service/postgres/rewind || /etc/service/postgres/basebackup
-    else
-        OLD_SYNC="$(sed -n "s|^pg_save\.sync = ||p" postgresql.auto.conf | tr -d "'")"
-        test -n "$OLD_SYNC" || exit 0
-        SYNC="$(etcdctl get sync --endpoints="$ETCD" --print-value-only)"
-        test -n "$SYNC"
-        SYNC_TIMESTAMPTZ="$(etcdctl get "$SYNC" --endpoints="$ETCD" --print-value-only)"
-        test -n "$SYNC_TIMESTAMPTZ"
-        TIMESTAMPTZ="$(date "+%F %T%Z")"
-        SYNC_SECOND="$(ddiff "$SYNC_TIMESTAMPTZ" "$TIMESTAMPTZ" -f "%S")"
-        test "$SYNC_SECOND" -lt "30" || exit 1
-        pg_isready --host="$SYNC"
-        OLD_POTENTIAL="$(sed -n "s|^pg_save\.potential = ||p" postgresql.auto.conf | tr -d "'")"
-        test -n "$OLD_POTENTIAL" || exit 0
-        POTENTIAL="$(etcdctl get potential --endpoints="$ETCD" --print-value-only)"
-        test -n "$POTENTIAL"
-        POTENTIAL_TIMESTAMPTZ="$(etcdctl get "$POTENTIAL" --endpoints="$ETCD" --print-value-only)"
-        test -n "$POTENTIAL_TIMESTAMPTZ"
-        POTENTIAL_SECOND="$(ddiff "$POTENTIAL_TIMESTAMPTZ" "$TIMESTAMPTZ" -f "%S")"
-        test "$POTENTIAL_SECOND" -lt "30" || exit 1
-        pg_isready --host="$POTENTIAL"
     fi
 fi
