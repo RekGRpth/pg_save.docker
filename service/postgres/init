@@ -3,9 +3,7 @@
 exec 2>&1
 realpath "$0"
 set -ex
-if pg_isready --dbname="$PRIMARY_CONNINFO"; then
-    PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="$PRIMARY_CONNINFO" --command="SELECT current_setting('pg_save.hostname', false)")"
-fi
+PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="$PRIMARY_CONNINFO" --command="SELECT current_setting('pg_save.hostname', false)" || echo "")"
 if [ -n "$PRIMARY" ]; then
     /etc/service/postgres/basebackup
 else
