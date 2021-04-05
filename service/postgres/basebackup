@@ -6,7 +6,7 @@ set -ex
 cd ..
 BACKUP="$(mktemp -dup .)"
 install -d -m 0750 -o "$USER" -g "$GROUP" "$BACKUP"
-PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="$PRIMARY_CONNINFO" --command="SELECT current_setting('custom.hostname', false)")"
+PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="$PRIMARY_CONNINFO" --command="SELECT current_setting('pg_save.hostname', false)")"
 test -n "$PRIMARY"
 if pg_basebackup \
     --host="$PRIMARY" \

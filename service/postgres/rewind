@@ -3,7 +3,7 @@
 exec 2>&1
 realpath "$0"
 set -ex
-PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="$PRIMARY_CONNINFO" --command="SELECT current_setting('custom.hostname', false)")"
+PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="$PRIMARY_CONNINFO" --command="SELECT current_setting('pg_save.hostname', false)")"
 test -n "$PRIMARY"
 pg_rewind \
     --progress \
