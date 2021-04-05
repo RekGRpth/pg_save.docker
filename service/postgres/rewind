@@ -8,7 +8,7 @@ test -n "$PRIMARY"
 pg_rewind \
     --progress \
     --restore-target-wal \
-    --source-server="host=$PRIMARY" \
+    --source-server="host=$PRIMARY application_name=$(hostname) target_session_attrs=read-write" \
     --target-pgdata=.
 touch standby.signal
 cat >>postgresql.auto.conf <<EOF
