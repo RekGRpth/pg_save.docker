@@ -16,7 +16,6 @@ if [ -d base ]; then
 else
     chpst -u "$USER":"$GROUP" /etc/service/postgres/init
 fi
-sed -i "/^pg_save.hostname = /cpg_save.hostname = '$(hostname)'" postgresql.auto.conf
 rm -f postmaster.pid /run/postgresql/.s.PGSQL.* /tmp/.s.PGSQL.*
 cd ..
 exec chpst -u "$USER":"$GROUP" postmaster
