@@ -23,5 +23,5 @@ primary_conninfo = 'host=$PRIMARY application_name=$(hostname) target_session_at
 EOF
 else
     rm -rf "$BACKUP"
+    cd "$PGDATA"
 fi
-cd "$PGDATA"
