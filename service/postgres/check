@@ -4,7 +4,8 @@ exec 2>&1
 realpath "$0"
 set -ex
 if [ ! -f standby.signal ]; then
-    if pg_isready --dbname="$PRIMARY_CONNINFO" && psql --quiet --tuples-only --no-align --dbname="$PRIMARY_CONNINFO" --command="SELECT now()"; then
+    PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="$PRIMARY_CONNINFO" --command="SELECT current_setting('custom.hostname', false)")"
+    if [ -n "$PRIMARY" ]; then
         /etc/service/postgres/rewind || /etc/service/postgres/basebackup
     fi
 fi
