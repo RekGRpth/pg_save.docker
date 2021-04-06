@@ -5,6 +5,11 @@ realpath "$0"
 set -ex
 if [ ! -f standby.signal ]; then
     PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="$PRIMARY_CONNINFO" --command="SELECT current_setting('pg_save.hostname', false)" || echo "")"
+    STATE="$(sed -n "s|^pg_save\.state = ||p" postgresql.auto.conf | tr -d "'")"
+    test -n "$STATE"
+    if [ "$STATE" == "wait_standby" ]; then
+        test -n "$PRIMARY"
+    fi
     if [ -n "$PRIMARY" ]; then
         /etc/service/postgres/rewind || /etc/service/postgres/basebackup
     fi
