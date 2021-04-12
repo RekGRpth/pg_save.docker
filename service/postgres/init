@@ -6,10 +6,9 @@ set -ex
 PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="host=$HOST_NAMES application_name=$(hostname) target_session_attrs=read-write" --command="SELECT current_setting('pg_save.hostname', false)" || echo "")"
 if [ -n "$PRIMARY" ]; then
     /etc/service/postgres/basebackup
+elif [ "$(echo "$HOST_NAMES" | tr "," "\n" | head -n1)" != "$(hostname)" ]; then
+    exit 1
 else
-    MY_IP="$(dig +short "$(hostname)")"
-    FIRST_IP="$(dig +short "$SERVICE_NAME" | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n)"
-    if [ "$MY_IP" != "$FIRST_IP" ]; then exit 1; fi
     initdb .
     /etc/service/postgres/conf
     /etc/service/postgres/hba
