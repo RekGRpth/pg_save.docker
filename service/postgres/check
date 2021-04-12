@@ -11,6 +11,6 @@ if [ ! -f standby.signal ]; then
         test -n "$PRIMARY"
     fi
     if [ -n "$PRIMARY" ]; then
-        /etc/service/postgres/rewind || /etc/service/postgres/basebackup
+        /etc/service/postgres/rewind "$PRIMARY" || /etc/service/postgres/basebackup "$PRIMARY"
     fi
 fi

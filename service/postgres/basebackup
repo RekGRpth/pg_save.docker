@@ -6,10 +6,9 @@ set -ex
 cd ..
 BACKUP="$(mktemp -dup .)"
 install -d -m 0750 -o "$USER" -g "$GROUP" "$BACKUP"
-PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="host=$HOST_NAMES application_name=$(hostname) target_session_attrs=read-write" --command="SELECT current_setting('pg_save.hostname', false)")"
-test -n "$PRIMARY"
+PRIMARY_CONNINFO="host=$1 application_name=$(hostname) target_session_attrs=read-write"
 if pg_basebackup \
-    --dbname="host=$PRIMARY application_name=$(hostname) target_session_attrs=read-write" \
+    --dbname="$PRIMARY_CONNINFO" \
     --pgdata="$BACKUP" \
     --progress \
     --verbose \
@@ -19,7 +18,7 @@ if pg_basebackup \
     cd "$PGDATA"
     touch standby.signal
     cat >>postgresql.auto.conf <<EOF
-primary_conninfo = 'host=$PRIMARY application_name=$(hostname) target_session_attrs=read-write'
+primary_conninfo = '$PRIMARY_CONNINFO'
 EOF
 else
     rm -rf "$BACKUP"
