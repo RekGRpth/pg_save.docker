@@ -9,6 +9,7 @@ docker run \
     --detach \
     --env CLUSTER_NAME=save \
     --env GROUP_ID="$(id -g)" \
+    --env HOST_NAMES=pg_save1.docker,pg_save2.docker,pg_save3.docker \
     --env LANG=ru_RU.UTF-8 \
     --env SERVICE_NAME=pg_save.docker \
     --env SYNCHRONOUS_STANDBY_NAMES='FIRST 1 ("pg_save1.docker", "pg_save2.docker", "pg_save3.docker")' \

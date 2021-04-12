@@ -3,7 +3,7 @@
 exec 2>&1
 realpath "$0"
 set -ex
-PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="host=$SERVICE_NAME application_name=$(hostname) target_session_attrs=read-write" --command="SELECT current_setting('pg_save.hostname', false)" || echo "")"
+PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="host=$HOST_NAMES application_name=$(hostname) target_session_attrs=read-write" --command="SELECT current_setting('pg_save.hostname', false)" || echo "")"
 if [ -n "$PRIMARY" ]; then
     /etc/service/postgres/basebackup
 else
