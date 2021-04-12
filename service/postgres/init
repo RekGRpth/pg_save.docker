@@ -7,6 +7,9 @@ PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="host=$SERVICE_NAME ap
 if [ -n "$PRIMARY" ]; then
     /etc/service/postgres/basebackup
 else
+    MY_IP="$(dig +short "$(hostname)")"
+    FIRST_IP="$(dig +short "$SERVICE_NAME" | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n)"
+    if [ "$MY_IP" != "$FIRST_IP" ]; then exit 1; fi
     initdb .
     /etc/service/postgres/conf
     /etc/service/postgres/hba
