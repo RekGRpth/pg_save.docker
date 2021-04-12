@@ -19,6 +19,6 @@ docker run \
     --mount type=volume,source=pg_arclog,destination=/var/lib/postgresql/arclog \
     --mount type=volume,source=pg_save2,destination=/var/lib/postgresql \
     --name pg_save2 \
-    --network name=docker \
+    --network name=docker,alias=pg_save.docker \
     --restart always \
     rekgrpth/pg_save runsvdir /etc/service
