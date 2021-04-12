@@ -10,7 +10,6 @@ docker run \
     --env CLUSTER_NAME=save \
     --env GROUP_ID="$(id -g)" \
     --env LANG=ru_RU.UTF-8 \
-    --env PRIMARY_CONNINFO="host=pg_save1.docker,pg_save2.docker,pg_save3.docker application_name=pg_save1.docker target_session_attrs=read-write" \
     --env SERVICE_NAME=pg_save.docker \
     --env SYNCHRONOUS_STANDBY_NAMES='FIRST 1 ("pg_save1.docker", "pg_save2.docker", "pg_save3.docker")' \
     --env TZ=Asia/Yekaterinburg \
