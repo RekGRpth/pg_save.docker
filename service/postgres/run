@@ -11,7 +11,7 @@ install -d -m 0750 -o "$USER" -g "$GROUP" "$PGDATA"
 install -d -m 1775 -o "$USER" -g "$GROUP" /run/postgresql /var/log/postgresql
 cd "$PGDATA"
 install -d -m 0750 -o "$USER" -g "$GROUP" "$ARCLOG"
-PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="host=$HOST_NAMES application_name=$(hostname) target_session_attrs=read-write" --command="SELECT current_setting('pg_save.hostname', false)" || echo)"
+PRIMARY="$(chpst -u "$USER":"$GROUP" psql --quiet --tuples-only --no-align --dbname="host=$HOST_NAMES application_name=$(hostname) target_session_attrs=read-write" --command="SELECT current_setting('pg_save.hostname', false)" || echo)"
 if [ -d base ]; then
     chpst -u "$USER":"$GROUP" /etc/service/postgres/check "$PRIMARY"
 else
