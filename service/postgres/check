@@ -4,9 +4,9 @@ exec 2>&1
 realpath "$0"
 set -ex
 if [ ! -f standby.signal ]; then
-    PRIMARY="$(psql --quiet --tuples-only --no-align --dbname="host=$HOST_NAMES application_name=$(hostname) target_session_attrs=read-write" --command="SELECT current_setting('pg_save.hostname', false)" || echo "")"
     STATE="$(sed -n "s|^pg_save\.state = ||p" postgresql.auto.conf | tr -d "'")"
     test -n "$STATE"
+    PRIMARY="$1"
     if [ "$STATE" == "wait_standby" ]; then
         test -n "$PRIMARY"
     fi
