@@ -3,10 +3,12 @@
 exec 2>&1
 realpath "$0"
 set -ex
-if [ ! -f standby.signal ]; then
+PRIMARY="$1"
+if [ -f standby.signal ]; then
+    test -n "$PRIMARY"
+else
     STATE="$(sed -n "s|^pg_save\.state = ||p" postgresql.auto.conf | tr -d "'")"
     test -n "$STATE"
-    PRIMARY="$1"
     if [ "$STATE" == "wait_standby" ]; then
         test -n "$PRIMARY"
     fi
