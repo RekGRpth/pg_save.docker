@@ -3,7 +3,8 @@
 exec 2>&1
 realpath "$0"
 set -ex
-PRIMARY_CONNINFO="host=$1 application_name=$(hostname) target_session_attrs=read-write"
+PRIMARY="$1"
+PRIMARY_CONNINFO="host=$PRIMARY application_name=$(hostname) target_session_attrs=read-write"
 pg_rewind \
     --progress \
     --restore-target-wal \
