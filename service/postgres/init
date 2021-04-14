@@ -6,7 +6,7 @@ set -ex
 PRIMARY="$1"
 if [ -n "$PRIMARY" ]; then
     /etc/service/postgres/basebackup "$PRIMARY"
-elif [ "$(echo "$HOST_NAMES" | tr "," "\n" | head -n1)" != "$(hostname)" ]; then
+elif [ "$(echo "$PRIMARY_CONNINFO" | cut -d" " -f1 | cut -d"=" -f2 | tr "," "\n" | head -n1)" != "$(hostname)" ]; then
     exit 1
 else
     initdb .
