@@ -7,16 +7,6 @@ cd "$(dirname "$0")"
 chmod 755 supervise
 chown "$USER":"$GROUP" supervise/ok supervise/control supervise/status
 cd "$HOME"
-install -d -m 0750 -o "$USER" -g "$GROUP" "$PGDATA"
 install -d -m 1775 -o "$USER" -g "$GROUP" /run/postgresql /var/log/postgresql
-cd "$PGDATA"
-install -d -m 0750 -o "$USER" -g "$GROUP" "$ARCLOG"
-PRIMARY="$(chpst -u "$USER":"$GROUP" psql --quiet --tuples-only --no-align --dbname="$PRIMARY_CONNINFO" --command="SELECT current_setting('pg_save.hostname', false)" || echo)"
-if [ -d base ]; then
-    chpst -u "$USER":"$GROUP" /etc/service/postgres/check "$PRIMARY"
-else
-    chpst -u "$USER":"$GROUP" /etc/service/postgres/init "$PRIMARY"
-fi
 rm -f postmaster.pid /run/postgresql/.s.PGSQL.* /tmp/.s.PGSQL.*
-cd ..
-exec chpst -u "$USER":"$GROUP" postmaster
+exec chpst -u "$USER":"$GROUP" pg_save
