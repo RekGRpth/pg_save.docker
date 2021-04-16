@@ -2,6 +2,7 @@ FROM alpine
 RUN exec 2>&1 \
     && set -ex \
     && apk add --no-cache --virtual .build-deps \
+        bsd-compat-headers \
         gcc \
         git \
         libedit-dev \
@@ -18,7 +19,6 @@ RUN exec 2>&1 \
     && find /usr/src -maxdepth 1 -mindepth 1 -type d | sort -u | while read -r NAME; do echo "$NAME" && cd "$NAME" && make -j"$(nproc)" USE_PGXS=1 install || exit 1; done \
     && apk add --no-cache --virtual .postgresql-rundeps \
 #        bind-tools \
-        bsd-compat-headers \
         busybox-extras \
         busybox-suid \
         ca-certificates \
