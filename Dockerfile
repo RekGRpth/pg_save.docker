@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.13
 RUN set -eux; \
     apk add --no-cache --virtual .build-deps \
         gcc \
