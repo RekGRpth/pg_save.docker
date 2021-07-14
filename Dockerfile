@@ -32,7 +32,7 @@ RUN set -eux; \
         tzdata \
         $(scanelf --needed --nobanner --format '%n#p' --recursive /usr/lib/postgresql/* | tr ',' '\n' | sort -u | while read -r lib; do test ! -e "/usr/local/lib/$lib" && echo "so:$lib"; done) \
     ; \
-    (strip /usr/local/bin/* /usr/local/lib/*.so || true); \
+    find /usr/local/bin /usr/local/lib -type f -exec strip '{}' \;; \
     apk del --no-cache .build-deps; \
     rm -rf /usr/src /usr/share/doc /usr/share/man /usr/local/share/doc /usr/local/share/man; \
     find / -name "*.a" -delete; \
