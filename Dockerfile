@@ -11,12 +11,11 @@ RUN set -eux; \
         readline-dev \
         zlib-dev \
     ; \
-    mkdir -p /usr/src; \
-    cd /usr/src; \
+    mkdir -p "${HOME}"; \
+    cd "${HOME}"; \
     git clone --recursive https://github.com/RekGRpth/pg_async.git; \
     git clone --recursive https://github.com/RekGRpth/pg_save.git; \
-    cd /; \
-    find /usr/src -maxdepth 1 -mindepth 1 -type d | sort -u | while read -r NAME; do echo "$NAME" && cd "$NAME" && make -j"$(nproc)" USE_PGXS=1 install || exit 1; done; \
+    find "${HOME}" -maxdepth 1 -mindepth 1 -type d | sort -u | while read -r NAME; do echo "$NAME" && cd "$NAME" && make -j"$(nproc)" USE_PGXS=1 install || exit 1; done; \
     apk add --no-cache --virtual .postgresql-rundeps \
         busybox-extras \
         busybox-suid \
@@ -34,9 +33,9 @@ RUN set -eux; \
     ; \
     find /usr/local/bin /usr/local/lib -type f -exec strip '{}' \;; \
     apk del --no-cache .build-deps; \
-    rm -rf /usr/src /usr/share/doc /usr/share/man /usr/local/share/doc /usr/local/share/man; \
-    find / -name "*.a" -delete; \
-    find / -name "*.la" -delete; \
+    find / -type f -name "*.a" -delete; \
+    find / -type f -name "*.la" -delete; \
+    rm -rf "${HOME}" /usr/share/doc /usr/share/man /usr/local/share/doc /usr/local/share/man; \
     echo done
 CMD [ "/etc/service/postgres/run" ]
 COPY bin /usr/local/bin
