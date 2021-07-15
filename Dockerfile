@@ -1,4 +1,5 @@
 FROM alpine:3.13
+ENV HOME=/var/lib/postgresql
 RUN set -eux; \
     apk add --no-cache --virtual .build-deps \
         gcc \
@@ -41,10 +42,9 @@ CMD [ "/etc/service/postgres/run" ]
 COPY bin /usr/local/bin
 COPY service /etc/service
 ENTRYPOINT [ "docker_entrypoint.sh" ]
-ENV HOME=/var/lib/postgresql
 ENV ARCLOG=../arclog \
     GROUP=postgres \
-    PGDATA="data" \
+    PGDATA=data \
     USER=postgres
 VOLUME "${HOME}"
 WORKDIR "${HOME}"
