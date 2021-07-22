@@ -1,4 +1,4 @@
-FROM alpine:3.13
+FROM alpine
 ENV HOME=/var/lib/postgresql
 RUN set -eux; \
     apk add --no-cache --virtual .build-deps \
