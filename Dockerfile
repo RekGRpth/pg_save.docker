@@ -14,8 +14,8 @@ RUN set -eux; \
     ; \
     mkdir -p "${HOME}/src"; \
     cd "${HOME}/src"; \
-    git clone --recursive https://github.com/RekGRpth/pg_async.git; \
-    git clone --recursive https://github.com/RekGRpth/pg_save.git; \
+    git clone -b REL_13_STABLE https://github.com/RekGRpth/pg_async.git; \
+    git clone -b REL_13_STABLE https://github.com/RekGRpth/pg_save.git; \
     find "${HOME}/src" -maxdepth 1 -mindepth 1 -type d | sort -u | while read -r NAME; do echo "$NAME" && cd "$NAME" && make -j"$(nproc)" USE_PGXS=1 install || exit 1; done; \
     apk add --no-cache --virtual .postgresql-rundeps \
         busybox-extras \
