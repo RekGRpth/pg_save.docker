@@ -1,5 +1,6 @@
-#!/bin/sh -ex
+#!/bin/sh -eux
 
+docker pull ghcr.io/rekgrpth/pg_save.docker
 NAME=pg_save2
 NETWORK=docker
 docker network create --attachable --opt "com.docker.network.bridge.name=$NETWORK" "$NETWORK" || echo $?
@@ -23,4 +24,4 @@ docker run \
     --name "$NAME" \
     --network name="$NETWORK" \
     --restart always \
-    rekgrpth/pg_save runsvdir /etc/service
+    ghcr.io/rekgrpth/pg_save.docker runsvdir /etc/service
