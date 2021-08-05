@@ -19,4 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: rekgrpth/git-clone-action@v1
-      - uses: rekgrpth/docker-login-build-push-action@v1
+      - env:
+          GITHUB_TOKEN: ${{ github.token }}
+        uses: rekgrpth/docker-login-build-push-action@v1
