@@ -12,6 +12,8 @@ jobs:
     concurrency:
       cancel-in-progress: true
       group: ${{ github.ref }}
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     name: ${{ github.event.client_payload.repository }} ${{ github.event_name }} ${{ github.event.branch }}
     permissions:
       contents: read
@@ -19,6 +21,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: rekgrpth/git-clone-action@v1
-      - env:
-          GITHUB_TOKEN: ${{ github.token }}
-        uses: rekgrpth/docker-login-build-push-action@v1
+      - uses: rekgrpth/docker-login-build-push-action@v1
