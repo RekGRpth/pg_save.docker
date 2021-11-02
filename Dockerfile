@@ -1,5 +1,4 @@
 FROM alpine
-ARG POSTGRES_VERSION=13
 ENV HOME=/var/lib/postgresql
 RUN set -eux; \
     apk update --no-cache; \
