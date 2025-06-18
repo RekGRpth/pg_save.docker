@@ -2,7 +2,7 @@ name: Docker
 on:
   push:
     branches:
-      - latest
+      - main
   repository_dispatch:
     types:
       - latest
@@ -14,6 +14,7 @@ jobs:
       group: ${{ github.ref }}
     env:
       GITHUB_TOKEN: ${{ github.token }}
+      INPUTS_TAG: latest
     name: ${{ github.event.client_payload.repository }} ${{ github.event_name }} ${{ github.event.branch }}
     runs-on: ubuntu-latest
     steps:
